@@ -113,6 +113,13 @@
 				// console.log("Result", auth.isSignedIn.get());
 			});
 		}
+
+		function saveFile() {
+			// Get the canvas data, use base64 encode
+			// Convert canvas data to string
+			var data = ctx.canvas.toDataURL("image/jpeg");
+			console.log(data);
+		}
 	</script>
 
 	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};initGoogleAPI()">
@@ -123,6 +130,7 @@
 	<div>
 		<button onclick="openFile();">Open</button>
 		<button onclick="invert();">Invert</button>
+		<button onclick="saveFile();">Save File</button>
 	</div>
 	<canvas id="cvs" width="600" height="450" style="border:1px solid black"></canvas>
 </body>

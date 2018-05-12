@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Photo Editor</title>
+	<script>
+		// 影像編輯功能
+		var ctx;
+		window.onload = function () {
+			ctx = document.getElementById("cvs").getContext("2d"); // 取得 canvas 相對應的 context 物件
+			// 載入圖片
+			// loadImage("landscape.jpg");
+		};
+
+		function loadImage(src) {
+			var img = new Image(); // <img/>
+			img.src = src;
+			img.onload = function () {
+				// 確定圖檔載入完成之後，才畫進 canvas 裡面
+				ctx.drawImage(this, 0, 0, ctx.canvas.width, ctx.canvas.height);
+			};
+		}
+
+		function invert() {
+			// 取得像素資料
+			var pixels = ctx.getImageData(0, 0, 600, 450);
+			// 以像素為單位處理資料
+			for (var i = 0; i < pixels.data.length; i += 4) {
+				pixels.data[i] = 255 - pixels.data[i]; // r
+				pixels.data[i + 1] = 255 - pixels.data[i + 1]; // g
+				pixels.data[i + 2] = 255 - pixels.data[i + 2]; // b
+			}
+			// 把處理完的像素資料放回 canvas 裡面
+			ctx.putImageData(pixels, 0, 0);
+		}
+		// ----------------------------------------------------------------------------
+		// -------------------------------------------------------------------------------
+		function openFile() {
+			if (auth.isSignedIn.get()) { // user has given authorization, open file selector
+				// use google picker to create could file selector
+				createPicker();
+
+			} else {
+				// user hasn't authorize, encourage user to authorize
+				auth.signIn();
+			}
+		}
+
+		function createPicker() {
+			var view = new google.picker.View(google.picker.ViewId.DOCS);
+			var view2 = new google.picker.View(google.picker.ViewId.DOCS);
+			view.setMimeTypes("image/png,image/jpeg,image/jpg");
+			var picker = new google.picker.PickerBuilder()
+				// .enableFeature(google.picker.Feature.NAV_HIDDEN)
+				// .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+				.setAppId("29773440921")
+				.setOAuthToken(auth.currentUser.get().getAuthResponse().access_token)
+				.addView(view)
+				.addView(view2)
+				.addView(new google.picker.DocsUploadView())
+				.setDeveloperKey(API_KEY)
+				.setCallback(pickerCallback)
+				.build();
+			picker.setVisible(true);
+		}
+
+		function pickerCallback(data) {
+			console.log(data.action);
+			if (data.action == google.picker.Action.PICKED) {
+				// If user selects the file, get the file ID
+				var fileId = data.docs[0].id;
+				console.log(data.docs[0]);
+				downloadFile(fileId);
+				// alert('The user selected: ' + fileId);
+			}
+		}
+
+		function downloadFile(fileId) {
+			// Use Ajax to download file
+			// loadImage();
+		}
+
+		// Client ID and API key from the Developer Console
+		const CLIENT_ID = '29773440921-e11j5cgf836gvbe97566pbf3picnomn5.apps.googleusercontent.com';
+		const API_KEY = 'AIzaSyDTa07a0oJoJ2RD0xDGtodreaXmaqiH8fc';
+		// Give the maximum scopes 
+		const SCOPES = "https://www.googleapis.com/auth/drive";
+		var auth = null;
+
+		function initGoogleAPI() {
+			gapi.load('client:auth2', initGoogleClient);
+			// load picker package
+			gapi.load('picker');
+		}
+
+		function initGoogleClient() {
+			gapi.client.init({
+				apiKey: API_KEY,
+				clientId: CLIENT_ID,
+				scope: SCOPES
+			}).then(function () {
+				auth = gapi.auth2.getAuthInstance();
+				// console.log("Auth object", auth);
+				// console.log("Result", auth.isSignedIn.get());
+			});
+		}
+	</script>
+
+	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};initGoogleAPI()">
+	</script>
+</head>
+
+<body>
+	<div>
+		<button onclick="openFile();">Open</button>
+		<button onclick="invert();">Invert</button>
+	</div>
+	<canvas id="cvs" width="600" height="450" style="border:1px solid black"></canvas>
+</body>
+
+</html>

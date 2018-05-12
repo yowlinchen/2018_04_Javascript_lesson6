@@ -16,6 +16,7 @@
 		function loadImage(src) {
 			var img = new Image(); // <img/>
 			img.src = src;
+			img.crossOrigin = "Anonymous";
 			img.onload = function () {
 				// 確定圖檔載入完成之後，才畫進 canvas 裡面
 				ctx.drawImage(this, 0, 0, ctx.canvas.width, ctx.canvas.height);

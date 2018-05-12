@@ -118,6 +118,7 @@
 			// Get the canvas data, use base64 encode
 			// Convert canvas data to string
 			var data = ctx.canvas.toDataURL("image/jpeg");
+			data = data.replace("data:image/jpeg;base64,", "");
 			console.log(data);
 		}
 	</script>

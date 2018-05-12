@@ -66,11 +66,13 @@
 			picker.setVisible(true);
 		}
 
+		var fileId;
+
 		function pickerCallback(data) {
 			console.log(data.action);
 			if (data.action == google.picker.Action.PICKED) {
 				// If user selects the file, get the file ID
-				var fileId = data.docs[0].id;
+				fileId = data.docs[0].id;
 				console.log(data.docs[0]);
 				downloadFile(fileId);
 				// alert('The user selected: ' + fileId);
@@ -120,10 +122,33 @@
 			var data = ctx.canvas.toDataURL("image/jpeg");
 			data = data.replace("data:image/jpeg;base64,", "");
 			// console.log(data);
-			uploadFile(data);
+			updateFile(data);
 		}
+		// function uploadFile(data) {
+		// 	var token = auth.currentUser.get().getAuthResponse().access_token;
+		// 	var boundary = "foo_bar_baz";
+		// 	// prepare the body
+		// 	var body = "--" + boundary + "\r\n" +
+		// 		"Content-Type: application/json; charset=UTF-8\r\n\r\n" +
+		// 		'{"name":"image.jpg"}\r\n\r\n' +
+		// 		"--" + boundary + "\r\n" +
+		// 		"Content-Type: image/jpeg\r\n" +
+		// 		"Content-Transfer-Encoding: base64\r\n\r\n" +
+		// 		data + "\r\n" +
+		// 		"--" + boundary + "--";
 
-		function uploadFile(data) {
+		// 	// send connection request to Google and upload file
+		// 	var req = new XMLHttpRequest();
+		// 	req.open("POST", "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart");
+		// 	req.onload = function () {
+		// 		alert("Uploaded");
+		// 	};
+		// 	req.setRequestHeader("Authorization", "Bearer " + token);
+		// 	req.setRequestHeader("Content-Type", "multipart/related; boundary=" + boundary);
+		// 	// req.send("連線的主內容")
+		// 	req.send(body);
+		// }
+		function updateFile(data) {
 			var token = auth.currentUser.get().getAuthResponse().access_token;
 			var boundary = "foo_bar_baz";
 			// prepare the body
@@ -138,7 +163,7 @@
 
 			// send connection request to Google and upload file
 			var req = new XMLHttpRequest();
-			req.open("POST", "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart");
+			req.open("PATCH", "https://www.googleapis.com/upload/drive/v3/files/" + fileId + "?uploadType=multipart");
 			req.onload = function () {
 				alert("Uploaded");
 			};

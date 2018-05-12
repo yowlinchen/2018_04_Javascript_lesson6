@@ -119,7 +119,33 @@
 			// Convert canvas data to string
 			var data = ctx.canvas.toDataURL("image/jpeg");
 			data = data.replace("data:image/jpeg;base64,", "");
-			console.log(data);
+			// console.log(data);
+			uploadFile(data);
+		}
+
+		function uploadFile(data) {
+			var token = auth.currentUser.get().getAuthResponse().access_token;
+			var boundary = "foo_bar_baz";
+			// prepare the body
+			var body = "--" + boundary + "\r\n" +
+				"Content-Type: application/json; charset=UTF-8\r\n\r\n" +
+				'{"name":"image.jpg"}\r\n\r\n' +
+				"--" + boundary + "\r\n" +
+				"Content-Type: image/jpeg\r\n" +
+				"Content-Transfer-Encoding: base64\r\n\r\n" +
+				data + "\r\n" +
+				"--" + boundary + "--";
+
+			// send connection request to Google and upload file
+			var req = new XMLHttpRequest();
+			req.open("POST", "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart");
+			req.onload = function () {
+				alert("Uploaded");
+			};
+			req.setRequestHeader("Authorization", "Bearer " + token);
+			req.setRequestHeader("Content-Type", "multipart/related; boundary=" + boundary);
+			// req.send("連線的主內容")
+			req.send(body);
 		}
 	</script>
 

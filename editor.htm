@@ -77,7 +77,12 @@
 		}
 
 		function downloadFile(fileId) {
-			console.log(auth.currentUser.get().getAuthResponse().access_token);
+			var token = auth.currentUser.get().getAuthResponse().access_token;
+			var src = "https://www.googleapis.com/drive/v3/files/" + fileId + "?access_token=" + token + "&alt=media";
+			loadImage(src);
+
+
+			loadImage()
 			console.log(fileId)
 			// Use Ajax to download file
 			// loadImage();
